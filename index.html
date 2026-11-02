@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#17110c" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>YAMaster — логическое сравнение YAML онлайн</title>
+    <meta
+      name="description"
+      content="Сравните два YAML по ключам и значениям — не построчно. Бесплатно, без регистрации."
+    />
+    <link rel="canonical" href="https://yamaster.dmosk.net/ru/" />
+    <link rel="alternate" hreflang="ru" href="https://yamaster.dmosk.net/ru/" />
+    <link rel="alternate" hreflang="en" href="https://yamaster.dmosk.net/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://yamaster.dmosk.net/en/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yamaster.dmosk.net/ru/" />
+    <meta property="og:title" content="YAMaster — логическое сравнение YAML онлайн" />
+    <meta
+      property="og:description"
+      content="Сравните два YAML по ключам и значениям — не построчно. Бесплатно, без регистрации."
+    />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:image" content="https://yamaster.dmosk.net/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600&display=optional"
+      rel="stylesheet"
+    />
+    <script type="application/ld+json" id="ld-app"></script>
+    <script type="application/ld+json" id="ld-faq"></script>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="topbar">
+        <p class="brand">dmosk / yamaster</p>
+        <div class="topbar-actions">
+          <a
+            class="github-link"
+            href="https://github.com/dmosktest/yamaster"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="GitHub"
+          >
+            <svg class="github-icon" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
+          </a>
+          <a
+            class="telegram-link"
+            href="https://t.me/dmosk"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Telegram"
+            title="Telegram"
+          >
+            <svg class="telegram-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"
+              />
+            </svg>
+          </a>
+          <details class="lang">
+            <summary class="lang-summary" aria-label="Язык сайта">
+              <img class="lang-flag" src="/flags/1f1f7-1f1fa.png" alt="" width="20" height="20" decoding="async" aria-hidden="true" />
+              <span class="lang-current-name">Русский</span>
+            </summary>
+            <div class="lang-menu" role="list">
+              <a href="/ru/" class="lang-option active" id="lang-ru" data-locale="ru" hreflang="ru" lang="ru" aria-current="page"><img class="lang-flag" src="/flags/1f1f7-1f1fa.png" alt="" width="20" height="20" decoding="async" aria-hidden="true" /><span class="lang-name">Русский</span></a>
+              <a href="/en/" class="lang-option" id="lang-en" data-locale="en" hreflang="en" lang="en" aria-current="false"><img class="lang-flag" src="/flags/1f1ec-1f1e7.png" alt="" width="20" height="20" decoding="async" aria-hidden="true" /><span class="lang-name">English</span></a>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <h1 id="heading">Логическое сравнение YAML</h1>
+      <p class="lead" id="lead">
+        Вставьте или загрузите два YAML. Отличия — по путям ключей: порядок и номера строк не важны. Тип учитывается: «1» ≠ 1.
+      </p>
+
+      <noscript>
+        <p class="noscript" data-i18n="noscript">
+          Включите JavaScript, чтобы сравнить YAML-документы.
+        </p>
+      </noscript>
+
+      <div class="panels">
+        <section class="panel" aria-labelledby="left-label">
+          <div class="panel-head">
+            <h2 class="panel-title" id="left-label">Слева</h2>
+            <label class="file-label">
+              <span id="left-upload-label">Загрузить YAML-файл</span>
+              <input
+                type="file"
+                id="left-file"
+                accept=".yml,.yaml,text/yaml,application/x-yaml"
+                hidden
+              />
+            </label>
+          </div>
+          <textarea
+            id="left-yaml"
+            class="yaml-input"
+            rows="14"
+            spellcheck="false"
+            placeholder="Вставьте YAML сюда…"
+          ></textarea>
+        </section>
+
+        <section class="panel" aria-labelledby="right-label">
+          <div class="panel-head">
+            <h2 class="panel-title" id="right-label">Справа</h2>
+            <label class="file-label">
+              <span id="right-upload-label">Загрузить YAML-файл</span>
+              <input
+                type="file"
+                id="right-file"
+                accept=".yml,.yaml,text/yaml,application/x-yaml"
+                hidden
+              />
+            </label>
+          </div>
+          <textarea
+            id="right-yaml"
+            class="yaml-input"
+            rows="14"
+            spellcheck="false"
+            placeholder="Вставьте YAML сюда…"
+          ></textarea>
+        </section>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="compare">Сравнить</button>
+        <button type="button" class="btn" id="clear">Очистить</button>
+      </div>
+
+      <p class="error" id="error" role="alert" aria-live="polite"></p>
+
+      <section class="results" aria-labelledby="results-heading">
+        <h2 class="results-title" id="results-heading">Результат</h2>
+        <div class="tabs" role="tablist" aria-label="Результат">
+          <button
+            type="button"
+            class="tab active"
+            id="tab-diffs"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-diffs"
+          >
+            Отличия
+          </button>
+          <button
+            type="button"
+            class="tab"
+            id="tab-unified"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-unified"
+          >
+            Общий вид
+          </button>
+        </div>
+        <div
+          class="tab-panel"
+          id="panel-diffs"
+          role="tabpanel"
+          aria-labelledby="tab-diffs"
+        >
+          <ul id="diffs" class="diffs" aria-live="polite"></ul>
+          <p class="empty-state" id="empty-state" hidden></p>
+        </div>
+        <div
+          class="tab-panel"
+          id="panel-unified"
+          role="tabpanel"
+          aria-labelledby="tab-unified"
+          hidden
+        >
+          <div id="unified" class="unified" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <article class="seo" id="seo-root">
+        <section class="seo-block" aria-labelledby="seo-benefits">
+          <h2 id="seo-benefits">Преимущества YAMaster</h2>
+          <ul>
+            <li><strong>Логическое сравнение.</strong> Отличия ищутся по путям ключей и значениям, а не по строкам текста.</li>
+            <li><strong>Порядок ключей не важен.</strong> Если в одном файле ключи переставлены, а данные те же, отличий не будет.</li>
+            <li><strong>Типы учитываются.</strong> Строка «1» и число 1, а также true и «true» считаются разными значениями.</li>
+            <li><strong>Бесплатно и без регистрации.</strong> Аккаунт и установка программ не нужны.</li>
+            <li><strong>Сравнение в браузере.</strong> По умолчанию YAML обрабатывается на вашем устройстве, а после установки PWA сервис работает офлайн.</li>
+            <li><strong>Два вида результата.</strong> Вкладка «Отличия» показывает список расхождений, «Общий вид» — оба документа вместе.</li>
+            <li><strong>Файлы и вставка.</strong> Загрузите .yml или .yaml либо вставьте текст в каждую панель.</li>
+          </ul>
+        </section>
+        <section class="seo-block" aria-labelledby="seo-how">
+          <h2 id="seo-how">Как сравнить два YAML</h2>
+          <ol>
+            <li>Вставьте первый YAML в левую панель или загрузите файл .yml или .yaml.</li>
+            <li>Вставьте второй YAML в правую панель или загрузите файл.</li>
+            <li>Нажмите «Сравнить».</li>
+            <li>Откройте вкладку «Отличия»: для каждого пути указано, что есть только слева, только справа или значение изменилось. Вкладка «Общий вид» показывает документы целиком.</li>
+          </ol>
+        </section>
+        <section class="seo-block" aria-labelledby="seo-strong">
+          <h2 id="seo-strong">Когда логическое сравнение лучше построчного diff</h2>
+          <p>Построчный diff показывает любую правку текста: переставленные ключи, другие отступы, кавычки и комментарии. Для конфигураций Kubernetes, Helm, Docker Compose, CI/CD и Ansible важнее смысл данных. YAMaster разбирает оба документа в структуру и сравнивает значения по путям вроде <code>spec.replicas</code>.</p>
+          <p class="seo-label">Что важно знать:</p>
+          <ul>
+            <li>Порядок ключей в маппинге не влияет на результат: ключи можно менять местами.</li>
+            <li>Типы различаются: <code>"1"</code> — строка, <code>1</code> — число, а <code>true</code> и <code>"true"</code> — разные значения.</li>
+            <li>Пробелы, отступы, комментарии и стиль кавычек не считаются отличиями, если данные совпадают.</li>
+            <li>Элементы списков сравниваются по позиции: при смене порядка отличия покажутся по индексам, например <code>items.0</code>.</li>
+            <li>Пути в результате записываются через точку, например <code>spec.template.metadata.labels.app</code>.</li>
+          </ul>
+        </section>
+        <section class="seo-block" aria-labelledby="seo-uses">
+          <h2 id="seo-uses">Для чего нужен сервис</h2>
+          <ul>
+            <li>сравнение конфигов Kubernetes, Helm values и Docker Compose между окружениями;</li>
+            <li>проверка изменений в CI/CD-пайплайнах и плейбуках Ansible;</li>
+            <li>ревью YAML после рефакторинга или автоформатирования;</li>
+            <li>поиск расхождений между dev, stage и prod;</li>
+            <li>проверка, что генерация или миграция конфигурации не изменила данные.</li>
+          </ul>
+        </section>
+        <section class="seo-block" aria-labelledby="seo-faq">
+          <h2 id="seo-faq">Частые вопросы</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Чем логическое сравнение YAML отличается от построчного?</summary>
+              <p>Построчный diff сравнивает текст, а логическое сравнение — разобранные данные. Переставленные ключи, отступы и комментарии не создают отличий, если значения совпадают.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Важен ли порядок ключей?</summary>
+              <p>Нет. Ключи в маппинге сравниваются по именам, поэтому их порядок в файле не влияет на результат.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Почему «1» и 1 считаются разными?</summary>
+              <p>Это значения разных типов: строка и число. В YAML такая разница часто важна, например для версий, портов и флагов, поэтому тип учитывается.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Как сравниваются списки?</summary>
+              <p>По позиции элементов. Если порядок в списке изменился, отличия будут показаны по индексам, например items.0 и items.1.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Учитываются ли комментарии и отступы?</summary>
+              <p>Нет. Они не попадают в разобранные данные, поэтому на результат не влияют.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Мои YAML отправляются на сервер?</summary>
+              <p>Интерфейс по умолчанию сравнивает документы локально в браузере и не отправляет их на сервер.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Какие файлы можно загрузить?</summary>
+              <p>Файлы с расширениями .yml и .yaml. Также можно просто вставить текст в левую и правую панели.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Что показывает вкладка «Отличия»?</summary>
+              <p>Список путей ключей с видом расхождения: значение есть только слева, только справа или оно изменилось.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Что делать, если появилась ошибка разбора?</summary>
+              <p>Проверьте отступы, двоеточия после ключей и кавычки. Сервис сообщает об ошибке, если YAML нельзя разобрать.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Сервис бесплатный?</summary>
+              <p>Да, он бесплатный, без регистрации и ограничений по числу сравнений.</p>
+            </details>
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

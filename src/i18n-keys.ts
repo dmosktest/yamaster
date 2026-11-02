@@ -1,0 +1,25 @@
+export const MESSAGE_KEYS = [
+  "langSwitch",
+  "noscript",
+  "leftPanel",
+  "rightPanel",
+  "pastePlaceholder",
+  "upload",
+  "compare",
+  "clear",
+  "resultsHeading",
+  "tabDiffs",
+  "tabUnified",
+  "ignore",
+  "ignoredHint",
+  "kindLeftOnly",
+  "kindRightOnly",
+  "kindChanged",
+  "noDiffs",
+  "allIgnored",
+  "emptyBoth",
+  "parseErrorLeft",
+  "parseErrorRight",
+] as const;
+
+export type MessageKey = (typeof MESSAGE_KEYS)[number];
