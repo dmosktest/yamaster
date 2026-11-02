@@ -142,11 +142,40 @@
         </section>
       </div>
 
+      <details class="options" id="options">
+        <summary id="options-summary">Параметры сравнения</summary>
+        <div class="options-body">
+          <label class="option-check">
+            <input type="checkbox" id="opt-k8s" />
+            <span id="opt-k8s-label">Пресет Kubernetes (ключи списков + игнор status/metadata)</span>
+          </label>
+          <label class="option-check">
+            <input type="checkbox" id="opt-array-set" />
+            <span id="opt-array-set-label">Считать списки множествами (порядок не важен)</span>
+          </label>
+          <label class="option-field" for="ignore-paths">
+            <span id="ignore-paths-label">Игнорировать пути (по одному на строку)</span>
+            <textarea
+              id="ignore-paths"
+              class="ignore-input"
+              rows="3"
+              spellcheck="false"
+              placeholder="metadata.creationTimestamp&#10;status.**&#10;**.managedFields"
+            ></textarea>
+          </label>
+          <p class="options-note" id="options-note">
+            Якоря, алиасы и merge-ключи YAML разворачиваются парсером до сравнения.
+          </p>
+        </div>
+      </details>
+
       <div class="actions">
         <button type="button" class="btn btn-primary" id="compare">Сравнить</button>
+        <button type="button" class="btn" id="share">Поделиться</button>
         <button type="button" class="btn" id="clear">Очистить</button>
       </div>
 
+      <p class="share-status" id="share-status" role="status" aria-live="polite"></p>
       <p class="error" id="error" role="alert" aria-live="polite"></p>
 
       <section class="results" aria-labelledby="results-heading">

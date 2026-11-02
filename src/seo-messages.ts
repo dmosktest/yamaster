@@ -106,8 +106,8 @@ const headings = localeNames({
 });
 
 const leads = localeNames({
-  en: "Paste or upload two YAML files. Differences are listed by key path — order and line numbers do not matter. Types count: \"1\" is not 1.",
-  ru: "Вставьте или загрузите два YAML. Отличия — по путям ключей: порядок и номера строк не важны. Тип учитывается: «1» ≠ 1.",
+  en: "Paste or upload two YAML files. Differences are listed by key path — order and line numbers do not matter. Types count: \"1\" is not 1. Multi-doc YAML, list-key matching, ignore rules, and share-via-URL-fragment are available.",
+  ru: "Вставьте или загрузите два YAML. Отличия — по путям ключей: порядок и номера строк не важны. Тип учитывается: «1» ≠ 1. Есть multi-doc YAML, сопоставление списков по ключу, правила игнора и шаринг через фрагмент URL.",
   zh: "粘贴或上传两个 YAML。差异按键路径列出——顺序和行号无关。类型有意义：\"1\" ≠ 1。",
   es: "Pegue o suba dos YAML. Las diferencias se listan por ruta de clave: el orden y las líneas no importan. El tipo cuenta: \"1\" ≠ 1.",
   hi: "दो YAML पेस्ट या अपलोड करें। अंतर कुंजी पथ से सूचीबद्ध — क्रम और पंक्ति संख्या मायने नहीं। प्रकार मायने रखता है: \"1\" ≠ 1।",

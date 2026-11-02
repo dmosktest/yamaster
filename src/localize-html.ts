@@ -152,7 +152,13 @@ export function localizeIndexHtml(html: string, locale: Locale): string {
   out = replaceTagContent(out, "span", "left-upload-label", t(locale, "upload"));
   out = replaceTagContent(out, "span", "right-upload-label", t(locale, "upload"));
   out = replaceTagContent(out, "button", "compare", t(locale, "compare"));
+  out = replaceTagContent(out, "button", "share", t(locale, "share"));
   out = replaceTagContent(out, "button", "clear", t(locale, "clear"));
+  out = replaceTagContent(out, "summary", "options-summary", t(locale, "optionsSummary"));
+  out = replaceTagContent(out, "span", "opt-k8s-label", t(locale, "optK8s"));
+  out = replaceTagContent(out, "span", "opt-array-set-label", t(locale, "optArraySet"));
+  out = replaceTagContent(out, "span", "ignore-paths-label", t(locale, "ignorePathsLabel"));
+  out = replaceTagContent(out, "p", "options-note", t(locale, "optionsNote"));
   out = replaceTagContent(out, "h2", "results-heading", t(locale, "resultsHeading"));
   out = replaceTagContent(out, "button", "tab-diffs", t(locale, "tabDiffs"));
   out = replaceTagContent(out, "button", "tab-unified", t(locale, "tabUnified"));
@@ -169,6 +175,11 @@ export function localizeIndexHtml(html: string, locale: Locale): string {
   out = out.replace(
     /(<textarea[^>]*\bid=["']right-yaml["'][^>]*placeholder=)(["'])(.*?)(\2)/i,
     `$1$2${placeholder}$2`,
+  );
+  const ignorePlaceholder = t(locale, "ignorePathsPlaceholder");
+  out = out.replace(
+    /(<textarea[^>]*\bid=["']ignore-paths["'][^>]*placeholder=)(["'])(.*?)(\2)/i,
+    `$1$2${ignorePlaceholder}$2`,
   );
 
   out = out.replace(

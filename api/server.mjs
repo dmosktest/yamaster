@@ -1,6 +1,6 @@
 import http from "node:http";
 import yaml from "js-yaml";
-import { compareYamlDocs } from "../shared/yaml-diff.mjs";
+import { compareYamlDocs, pairDocuments } from "../shared/yaml-diff.mjs";
 
 const port = Number.parseInt(process.env.PORT || "8080", 10);
 const MAX_BODY = 1_000_000;
@@ -35,7 +35,8 @@ function readBody(req, limit) {
 
 function parseYamlSide(text, side) {
   try {
-    return { ok: true, value: yaml.load(text) };
+    const docs = yaml.loadAll(text, null, { schema: yaml.DEFAULT_SCHEMA });
+    return { ok: true, value: docs };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return {
@@ -44,6 +45,27 @@ function parseYamlSide(text, side) {
       message,
     };
   }
+}
+
+function normalizeOptions(raw) {
+  if (!raw || typeof raw !== "object") {
+    return {
+      ignorePaths: [],
+      preset: undefined,
+      arrayAsSet: false,
+    };
+  }
+  const ignorePaths = Array.isArray(raw.ignorePaths)
+    ? raw.ignorePaths.filter((v) => typeof v === "string")
+    : [];
+  const preset =
+    typeof raw.preset === "string" && raw.preset.length > 0 ? raw.preset : undefined;
+  return {
+    ignorePaths,
+    preset,
+    kubernetes: Boolean(raw.kubernetes),
+    arrayAsSet: Boolean(raw.arrayAsSet),
+  };
 }
 
 async function handleCompare(req, res) {
@@ -100,7 +122,9 @@ async function handleCompare(req, res) {
     return;
   }
 
-  const result = compareYamlDocs(leftParsed.value, rightParsed.value);
+  const options = normalizeOptions(body.options);
+  const paired = pairDocuments(leftParsed.value, rightParsed.value);
+  const result = compareYamlDocs(paired.left, paired.right, options);
   sendJson(res, 200, result);
 }
 

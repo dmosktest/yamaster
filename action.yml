@@ -1,0 +1,103 @@
+name: YAMaster YAML diff
+description: Logical YAML comparison for CI (keys and values, not line numbers).
+branding:
+  icon: git-compare
+  color: orange
+inputs:
+  left:
+    description: Path to the left YAML file
+    required: true
+  right:
+    description: Path to the right YAML file
+    required: true
+  preset:
+    description: Optional preset (kubernetes)
+    required: false
+    default: ""
+  ignore:
+    description: Comma-separated ignore paths (* and ** supported)
+    required: false
+    default: ""
+  array-as-set:
+    description: Treat all lists as unordered sets (true/false)
+    required: false
+    default: "false"
+  json:
+    description: Print JSON output (true/false)
+    required: false
+    default: "false"
+outputs:
+  diff-count:
+    description: Number of logical differences
+    value: ${{ steps.diff.outputs.diff-count }}
+runs:
+  using: composite
+  steps:
+    - id: diff
+      shell: bash
+      env:
+        INPUT_LEFT: ${{ inputs.left }}
+        INPUT_RIGHT: ${{ inputs.right }}
+        INPUT_PRESET: ${{ inputs.preset }}
+        INPUT_IGNORE: ${{ inputs.ignore }}
+        INPUT_ARRAY_AS_SET: ${{ inputs.array-as-set }}
+        INPUT_JSON: ${{ inputs.json }}
+      run: |
+        set -euo pipefail
+        ROOT="${GITHUB_ACTION_PATH}"
+        if [[ ! -f "$ROOT/package.json" ]]; then
+          echo "yamaster action files are missing in this checkout" >&2
+          exit 2
+        fi
+        resolve_path() {
+          local p="$1"
+          if [[ "$p" = /* ]]; then
+            printf '%s\n' "$p"
+          else
+            printf '%s\n' "${GITHUB_WORKSPACE%/}/$p"
+          fi
+        }
+        LEFT_PATH="$(resolve_path "$INPUT_LEFT")"
+        RIGHT_PATH="$(resolve_path "$INPUT_RIGHT")"
+        cd "$ROOT"
+        if [[ ! -d node_modules/js-yaml ]]; then
+          npm install --omit=dev --no-fund --no-audit
+        fi
+        ARGS=("$LEFT_PATH" "$RIGHT_PATH")
+        if [[ -n "${INPUT_PRESET}" ]]; then
+          ARGS+=(--preset "$INPUT_PRESET")
+        fi
+        if [[ -n "${INPUT_IGNORE}" ]]; then
+          IFS=',' read -r -a IGNORES <<< "$INPUT_IGNORE"
+          for item in "${IGNORES[@]}"; do
+            item_trimmed="$(echo "$item" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            if [[ -n "$item_trimmed" ]]; then
+              ARGS+=(--ignore "$item_trimmed")
+            fi
+          done
+        fi
+        if [[ "${INPUT_ARRAY_AS_SET}" == "true" ]]; then
+          ARGS+=(--array-as-set)
+        fi
+        if [[ "${INPUT_JSON}" == "true" ]]; then
+          ARGS+=(--json)
+        fi
+        set +e
+        OUT="$(node bin/yamaster.mjs "${ARGS[@]}")"
+        CODE=$?
+        set -e
+        printf '%s\n' "$OUT"
+        if [[ "$CODE" -eq 0 ]]; then
+          COUNT=0
+        elif [[ "$CODE" -eq 1 ]]; then
+          if [[ "${INPUT_JSON}" == "true" ]]; then
+            COUNT="$(printf '%s' "$OUT" | node -e "let s='';process.stdin.on('data',d=>s+=d);process.stdin.on('end',()=>{const j=JSON.parse(s);process.stdout.write(String((j.diffs||[]).length));});")"
+          else
+            COUNT="$(printf '%s\n' "$OUT" | sed -n 's/^\([0-9][0-9]*\) difference(s)$/\1/p' | tail -n1)"
+            COUNT="${COUNT:-1}"
+          fi
+        else
+          exit "$CODE"
+        fi
+        echo "diff-count=${COUNT}" >> "$GITHUB_OUTPUT"
+        exit "$CODE"

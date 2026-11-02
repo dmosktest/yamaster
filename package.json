@@ -1,12 +1,16 @@
 {
   "name": "yamaster",
   "private": true,
-  "version": "1.1.3",
+  "version": "1.2.0",
   "type": "module",
+  "bin": {
+    "yamaster": "./bin/yamaster.mjs"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test shared/yaml-diff.test.mjs"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

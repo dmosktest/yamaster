@@ -2,15 +2,16 @@ import "./style.css";
 import yaml from "js-yaml";
 import { detectLocale, t } from "./i18n";
 import { registerServiceWorker } from "./register-sw";
+import { decodeShareState, encodeShareState } from "./share-state";
 import type { Locale } from "./site-config";
 import {
   buildUnifiedView,
   diffFingerprint,
   type UnifiedLine,
 } from "./unified-view";
-import { compareYamlDocs, type DiffEntry } from "./yaml-diff";
+import { compareYamlDocs, pairDocuments, type DiffEntry } from "./yaml-diff";
 
-const STORAGE_KEY = "yamaster:v1";
+const STORAGE_KEY = "yamaster:v2";
 
 type ResultTab = "diffs" | "unified";
 
@@ -18,6 +19,9 @@ type SessionState = {
   left: string;
   right: string;
   ignored: string[];
+  ignorePaths: string;
+  kubernetes: boolean;
+  arrayAsSet: boolean;
   tab: ResultTab;
   compared: boolean;
 };
@@ -62,13 +66,37 @@ function visibleDiffs(): DiffEntry[] {
   return state.allDiffs.filter((diff) => !state.ignored.has(diffFingerprint(diff)));
 }
 
+function readIgnorePaths(): string[] {
+  const el = document.getElementById("ignore-paths") as HTMLTextAreaElement | null;
+  if (!el) return [];
+  return el.value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function readCompareOptions() {
+  const k8s = document.getElementById("opt-k8s") as HTMLInputElement | null;
+  const arraySet = document.getElementById("opt-array-set") as HTMLInputElement | null;
+  return {
+    ignorePaths: readIgnorePaths(),
+    kubernetes: Boolean(k8s?.checked),
+    arrayAsSet: Boolean(arraySet?.checked),
+  };
+}
+
 function saveSession(): void {
   const leftYaml = document.getElementById("left-yaml") as HTMLTextAreaElement | null;
   const rightYaml = document.getElementById("right-yaml") as HTMLTextAreaElement | null;
+  const ignorePaths = document.getElementById("ignore-paths") as HTMLTextAreaElement | null;
+  const opts = readCompareOptions();
   const payload: SessionState = {
     left: leftYaml?.value ?? "",
     right: rightYaml?.value ?? "",
     ignored: [...state.ignored],
+    ignorePaths: ignorePaths?.value ?? "",
+    kubernetes: opts.kubernetes,
+    arrayAsSet: opts.arrayAsSet,
     tab: state.tab,
     compared: state.compared,
   };
@@ -81,9 +109,9 @@ function saveSession(): void {
 
 function loadSession(): SessionState | null {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = sessionStorage.getItem(STORAGE_KEY) ?? sessionStorage.getItem("yamaster:v1");
     if (!raw) return null;
-    const data = JSON.parse(raw) as SessionState;
+    const data = JSON.parse(raw) as Partial<SessionState>;
     if (typeof data.left !== "string" || typeof data.right !== "string") return null;
     return {
       left: data.left,
@@ -91,6 +119,9 @@ function loadSession(): SessionState | null {
       ignored: Array.isArray(data.ignored)
         ? data.ignored.filter((v): v is string => typeof v === "string")
         : [],
+      ignorePaths: typeof data.ignorePaths === "string" ? data.ignorePaths : "",
+      kubernetes: Boolean(data.kubernetes),
+      arrayAsSet: Boolean(data.arrayAsSet),
       tab: data.tab === "unified" ? "unified" : "diffs",
       compared: Boolean(data.compared),
     };
@@ -102,6 +133,7 @@ function loadSession(): SessionState | null {
 function clearSession(): void {
   try {
     sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem("yamaster:v1");
   } catch {
     /* ignore */
   }
@@ -342,6 +374,22 @@ function applyStaticI18n(locale: Locale): void {
   if (compareBtn) compareBtn.textContent = t(locale, "compare");
   const clearBtn = document.getElementById("clear");
   if (clearBtn) clearBtn.textContent = t(locale, "clear");
+  const shareBtn = document.getElementById("share");
+  if (shareBtn) shareBtn.textContent = t(locale, "share");
+
+  const optionsSummary = document.getElementById("options-summary");
+  if (optionsSummary) optionsSummary.textContent = t(locale, "optionsSummary");
+  const optK8s = document.getElementById("opt-k8s-label");
+  if (optK8s) optK8s.textContent = t(locale, "optK8s");
+  const optArraySet = document.getElementById("opt-array-set-label");
+  if (optArraySet) optArraySet.textContent = t(locale, "optArraySet");
+  const ignoreLabel = document.getElementById("ignore-paths-label");
+  if (ignoreLabel) ignoreLabel.textContent = t(locale, "ignorePathsLabel");
+  const ignorePaths = document.getElementById("ignore-paths") as HTMLTextAreaElement | null;
+  if (ignorePaths) ignorePaths.placeholder = t(locale, "ignorePathsPlaceholder");
+  const optionsNote = document.getElementById("options-note");
+  if (optionsNote) optionsNote.textContent = t(locale, "optionsNote");
+
   const resultsHeading = document.getElementById("results-heading");
   if (resultsHeading) resultsHeading.textContent = t(locale, "resultsHeading");
   const tabDiffs = document.getElementById("tab-diffs");
@@ -350,6 +398,10 @@ function applyStaticI18n(locale: Locale): void {
   if (tabUnified) tabUnified.textContent = t(locale, "tabUnified");
   const tabs = document.querySelector(".tabs");
   if (tabs) tabs.setAttribute("aria-label", t(locale, "resultsHeading"));
+}
+
+function parseYamlDocs(text: string): unknown[] {
+  return yaml.loadAll(text, null, { schema: yaml.DEFAULT_SCHEMA });
 }
 
 function runCompare(locale: Locale, opts?: { keepIgnored?: boolean }): void {
@@ -373,26 +425,28 @@ function runCompare(locale: Locale, opts?: { keepIgnored?: boolean }): void {
     return;
   }
 
-  let leftDoc: unknown;
+  let leftDocs: unknown[];
   try {
-    leftDoc = yaml.load(leftText);
+    leftDocs = parseYamlDocs(leftText);
   } catch {
     if (errorEl) errorEl.textContent = t(locale, "parseErrorLeft");
     return;
   }
 
-  let rightDoc: unknown;
+  let rightDocs: unknown[];
   try {
-    rightDoc = yaml.load(rightText);
+    rightDocs = parseYamlDocs(rightText);
   } catch {
     if (errorEl) errorEl.textContent = t(locale, "parseErrorRight");
     return;
   }
 
   if (errorEl) errorEl.textContent = "";
-  const { diffs } = compareYamlDocs(leftDoc, rightDoc);
-  state.leftDoc = leftDoc;
-  state.rightDoc = rightDoc;
+  const paired = pairDocuments(leftDocs, rightDocs);
+  const compareOpts = readCompareOptions();
+  const { diffs } = compareYamlDocs(paired.left, paired.right, compareOpts);
+  state.leftDoc = paired.left;
+  state.rightDoc = paired.right;
   state.allDiffs = diffs;
   state.compared = true;
   if (!opts?.keepIgnored) state.ignored.clear();
@@ -401,7 +455,30 @@ function runCompare(locale: Locale, opts?: { keepIgnored?: boolean }): void {
   saveSession();
 }
 
-function boot(): void {
+async function shareCurrent(locale: Locale): Promise<void> {
+  const status = document.getElementById("share-status");
+  const leftYaml = document.getElementById("left-yaml") as HTMLTextAreaElement | null;
+  const rightYaml = document.getElementById("right-yaml") as HTMLTextAreaElement | null;
+  const opts = readCompareOptions();
+  const encoded = await encodeShareState({
+    v: 1,
+    left: leftYaml?.value ?? "",
+    right: rightYaml?.value ?? "",
+    ignorePaths: opts.ignorePaths,
+    kubernetes: opts.kubernetes,
+    arrayAsSet: opts.arrayAsSet,
+  });
+  const url = `${window.location.origin}${window.location.pathname}#${encoded}`;
+  history.replaceState(null, "", url);
+  try {
+    await navigator.clipboard.writeText(url);
+    if (status) status.textContent = t(locale, "shareCopied");
+  } catch {
+    if (status) status.textContent = t(locale, "shareFailed");
+  }
+}
+
+async function boot(): Promise<void> {
   const locale = detectLocale();
   state.locale = locale;
   applyStaticI18n(locale);
@@ -412,7 +489,11 @@ function boot(): void {
   const rightYaml = document.getElementById("right-yaml") as HTMLTextAreaElement | null;
   const leftFile = document.getElementById("left-file") as HTMLInputElement | null;
   const rightFile = document.getElementById("right-file") as HTMLInputElement | null;
+  const ignorePaths = document.getElementById("ignore-paths") as HTMLTextAreaElement | null;
+  const optK8s = document.getElementById("opt-k8s") as HTMLInputElement | null;
+  const optArraySet = document.getElementById("opt-array-set") as HTMLInputElement | null;
   const errorEl = document.getElementById("error");
+  const shareStatus = document.getElementById("share-status");
 
   bindFileInput(leftFile, leftYaml, () => {
     if (errorEl) errorEl.textContent = t(locale, "parseErrorLeft");
@@ -423,6 +504,9 @@ function boot(): void {
 
   leftYaml?.addEventListener("input", () => saveSession());
   rightYaml?.addEventListener("input", () => saveSession());
+  ignorePaths?.addEventListener("input", () => saveSession());
+  optK8s?.addEventListener("change", () => saveSession());
+  optArraySet?.addEventListener("change", () => saveSession());
 
   document.getElementById("tab-diffs")?.addEventListener("click", () => {
     setTab("diffs");
@@ -432,13 +516,22 @@ function boot(): void {
   });
 
   document.getElementById("compare")?.addEventListener("click", () => {
+    if (shareStatus) shareStatus.textContent = "";
     runCompare(locale);
+  });
+
+  document.getElementById("share")?.addEventListener("click", () => {
+    void shareCurrent(locale);
   });
 
   document.getElementById("clear")?.addEventListener("click", () => {
     if (leftYaml) leftYaml.value = "";
     if (rightYaml) rightYaml.value = "";
+    if (ignorePaths) ignorePaths.value = "";
+    if (optK8s) optK8s.checked = false;
+    if (optArraySet) optArraySet.checked = false;
     if (errorEl) errorEl.textContent = "";
+    if (shareStatus) shareStatus.textContent = "";
     state.allDiffs = [];
     state.ignored.clear();
     state.leftDoc = undefined;
@@ -448,12 +541,29 @@ function boot(): void {
     renderUnified(locale);
     setTab("diffs");
     clearSession();
+    history.replaceState(null, "", window.location.pathname + window.location.search);
   });
+
+  const fromHash = await decodeShareState(window.location.hash);
+  if (fromHash) {
+    if (leftYaml) leftYaml.value = fromHash.left;
+    if (rightYaml) rightYaml.value = fromHash.right;
+    if (ignorePaths) ignorePaths.value = fromHash.ignorePaths.join("\n");
+    if (optK8s) optK8s.checked = fromHash.kubernetes;
+    if (optArraySet) optArraySet.checked = fromHash.arrayAsSet;
+    if (fromHash.left.trim() && fromHash.right.trim()) {
+      runCompare(locale);
+    }
+    return;
+  }
 
   const saved = loadSession();
   if (saved) {
     if (leftYaml) leftYaml.value = saved.left;
     if (rightYaml) rightYaml.value = saved.right;
+    if (ignorePaths) ignorePaths.value = saved.ignorePaths;
+    if (optK8s) optK8s.checked = saved.kubernetes;
+    if (optArraySet) optArraySet.checked = saved.arrayAsSet;
     state.ignored = new Set(saved.ignored);
     state.tab = saved.tab;
     if (saved.compared && saved.left.trim() && saved.right.trim()) {
@@ -463,4 +573,4 @@ function boot(): void {
   }
 }
 
-boot();
+void boot();
